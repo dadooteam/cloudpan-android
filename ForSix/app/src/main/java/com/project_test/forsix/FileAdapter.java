@@ -1,4 +1,4 @@
-package com.project_test.kun.forsix;
+package com.project_test.forsix;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -31,14 +31,6 @@ public class FileAdapter extends BaseAdapter {
     ArrayList<File> filedata;
     Context context;
     //排序方法
-    int sortWay = 1;
-
-
-    public void setSortWay(int sortWay) {
-        this.sortWay = sortWay;
-    }
-
-
 
 
     public FileAdapter(Context context, ArrayList<File> data) {
