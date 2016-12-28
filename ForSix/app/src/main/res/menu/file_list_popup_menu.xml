@@ -3,11 +3,6 @@
     <item
         android:id="@+id/more_remove"
         android:title="删除"></item>
-    <item
-        android:id="@+id/more_rename"
-        android:title="重命名"></item>
-    <item
-        android:id="@+id/more_copy"
-        android:title="复制"></item>
+
 
 </menu>

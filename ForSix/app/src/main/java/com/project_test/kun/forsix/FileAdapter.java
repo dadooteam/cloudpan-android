@@ -22,7 +22,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 /**
  * Created by kun on 2016/12/28.
@@ -32,7 +31,7 @@ public class FileAdapter extends BaseAdapter {
     ArrayList<File> filedata;
     Context context;
     //排序方法
-    int sortWay = FileSortFactory.SORT_BY_FOLDER_AND_NAME;
+    int sortWay = 1;
 
 
     public void setSortWay(int sortWay) {
@@ -50,7 +49,7 @@ public class FileAdapter extends BaseAdapter {
 
     public File[]  setfiledata(ArrayList<File> data) {
         this.filedata = data;
-        sort();
+//        sort();
         this.notifyDataSetChanged();
         File[] files = new File[filedata.size()];
         for (int i = 0;i<files.length;i++) {
@@ -67,17 +66,9 @@ public class FileAdapter extends BaseAdapter {
         return files;
     }
 
-    /**
-     * 将文件列表排序
-     */
-    private void sort() {
-        Collections.sort(this.filedata, FileSortFactory.getWebFileQueryMethod(sortWay));
-    }
 
     @Override
     public void notifyDataSetChanged() {
-        //重新排序
-        sort();
         super.notifyDataSetChanged();
     }
 
@@ -175,30 +166,23 @@ public class FileAdapter extends BaseAdapter {
 
         @Override
         public void onClick(final View v) {
-            //获取view中绑定的tag
             position = (Integer) v.getTag();
-            //创建菜单
             PopupMenu popupMenu = new PopupMenu(context, v);
-            //加载布局
             popupMenu.inflate(R.menu.file_list_popup_menu);
-            //设置消失时的监听器
             popupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
                 @Override
                 public void onDismiss(PopupMenu menu) {
-                    //旋转动画(消失的时候会显示旋转动画)
                     RotateAnimation rotateAnimation = new RotateAnimation(180, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-                    //设置动画时间300ms
                     rotateAnimation.setDuration(200);
-                    //设置动画保留状态
                     rotateAnimation.setFillAfter(true);
                     v.startAnimation(rotateAnimation);
                 }
             });
             popupMenu.setOnMenuItemClickListener(this);
             if (filedata.get(position).isDirectory()){
-                popupMenu.getMenu().findItem(R.id.more_copy).setVisible(false);
+                popupMenu.getMenu().findItem(R.id.more_remove).setVisible(false);
             }else {
-                popupMenu.getMenu().findItem(R.id.more_copy).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.more_remove).setVisible(true);
 
             }
             RotateAnimation rotateAnimation = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -218,12 +202,6 @@ public class FileAdapter extends BaseAdapter {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.more_rename:
-                    doRename();
-                    break;
-                case R.id.more_copy:
-                    doCopy();
-                    break;
                 case R.id.more_remove:
                     doRemove();
                     break;
@@ -256,45 +234,6 @@ public class FileAdapter extends BaseAdapter {
          */
         private void showToast(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }
-
-        /**
-         * 复制
-         */
-        private void doCopy() {
-            if (onCopyFileListener!=null) {
-                onCopyFileListener.doCopy(filedata.get(position));
-            }
-        }
-
-
-
-        /**
-         * 重命名
-         */
-        private void doRename() {
-            showToast("重命名" + position);
-            RenameFileDialog dialog = new RenameFileDialog(context, filedata, position);
-            dialog.setOnFileRenameListener(new RenameFileDialog.OnFileRenameListener() {
-                @Override
-                public void onFileRenamed(boolean success) {
-                    String message = null;
-                    if (filedata.get(position).isFile()) {
-                        message = "文件";
-                    } else {
-                        message = "文件夹";
-                    }
-                    if (success) {
-                        message += "重命名成功";
-                    } else {
-                        message += "重命名失败";
-
-                    }
-                    showToast(message);
-                }
-            });
-            dialog.show();
-            setfiledata(filedata);
         }
     }
 
@@ -332,14 +271,5 @@ public class FileAdapter extends BaseAdapter {
         file.delete();
     }
 
-    public interface OnCopyFileListener{
-        void doCopy(File file);
-    }
-
-    OnCopyFileListener onCopyFileListener;
-
-    public void setonCopyListner(OnCopyFileListener onCopyFileListener){
-        this.onCopyFileListener = onCopyFileListener;
-    };
 
 }
