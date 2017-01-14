@@ -22,10 +22,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Stack;
 
-public class MainActivity extends AppCompatActivity {
+public class UploadActivity extends AppCompatActivity {
     private TextView showtv;
     private ListView lv;
-    //菜单
     private ArrayList<File> data = new ArrayList<>();
     private File[] files;
     private FileAdapter fileAdapter;
@@ -75,11 +74,6 @@ public class MainActivity extends AppCompatActivity {
 
         lv.setOnItemClickListener(new FileItemClickListener());
     }
-
-
-
-
-    static File watingCopyFile;
 
     class FileItemClickListener implements AdapterView.OnItemClickListener {
 

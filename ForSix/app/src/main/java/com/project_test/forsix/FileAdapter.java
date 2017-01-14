@@ -30,8 +30,6 @@ import java.util.Date;
 public class FileAdapter extends BaseAdapter {
     ArrayList<File> filedata;
     Context context;
-    //排序方法
-
 
     public FileAdapter(Context context, ArrayList<File> data) {
         this.context = context;
@@ -262,6 +260,5 @@ public class FileAdapter extends BaseAdapter {
         }
         file.delete();
     }
-
 
 }
