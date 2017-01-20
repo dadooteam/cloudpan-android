@@ -6,12 +6,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.project_test.forsix.ShowCloudFilesActivity">
-<ListView
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttons"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        >
+
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+            <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_back"
+            android:id="@+id/back"
+            />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_create"
+                android:id="@+id/create"
+                />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_goto_upload"
+                android:id="@+id/goto_upload"
+                />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/button_goto_login"
+                android:id="@+id/goto_login"
+                />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <ListView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/cloud_files"
+    android:layout_above="@id/buttons"
     >
-
-
 </ListView>
+
 </RelativeLayout>
