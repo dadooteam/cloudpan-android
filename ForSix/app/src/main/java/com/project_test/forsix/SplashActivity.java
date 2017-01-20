@@ -17,8 +17,6 @@ import java.util.ArrayList;
 public class SplashActivity extends AppCompatActivity {
     private static final int READ_EXTERNAL_STORAGE_CODE = 99;
     private ViewPager pager;
-    private SplashFragment1 mFragment1;
-    private SplashFragment2 mFragment2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +40,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void init() {
         pager= (ViewPager) findViewById(R.id.pager);
-        mFragment1=new SplashFragment1();
-        mFragment2=new SplashFragment2();
         FragmentManager fm = getSupportFragmentManager();
         ArrayList<Fragment> fragments = new ArrayList<>();
         fragments.add(new SplashFragment1());

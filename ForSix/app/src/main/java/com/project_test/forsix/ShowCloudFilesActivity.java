@@ -14,14 +14,12 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cloud_files);
         init();
-
-        //TODO:retrofit请求框架，请求列表，显示；
     }
 
     private void init() {
+        getCloudFiles();
         confirmConnectify();
         cloudFiles= (ListView) findViewById(R.id.cloud_files);
-
     }
 
     private void confirmConnectify() {
@@ -30,5 +28,13 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
         if (!networkInfo.isConnected()) {
             Toast.makeText(ShowCloudFilesActivity.this, "友情提示:当前不处于Wifi环境", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    private void getCloudFiles() {
+
+
+
+
     }
 }

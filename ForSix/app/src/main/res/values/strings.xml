@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">克劳德盘</string>
     <string name="splash_string">点此进入</string>
+    <string name="phone_number">手机号码</string>
+    <string name="password">密码</string>
+    <string name="login">登录</string>
 </resources>
