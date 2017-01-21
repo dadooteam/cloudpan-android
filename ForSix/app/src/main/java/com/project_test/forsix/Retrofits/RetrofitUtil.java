@@ -20,7 +20,7 @@ public interface RetrofitUtil {
 
     @GET("list")
     Call<FileListBean> getFileListRequest(
-            @Header("Authorization") String token);
-
+            @Header("Authorization") String token,
+            @Header("path") String filePath);
 
 }

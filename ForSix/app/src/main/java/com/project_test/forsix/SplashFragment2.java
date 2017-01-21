@@ -54,7 +54,7 @@ public class SplashFragment2 extends Fragment {
                 .build();
 
         RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
-        Call call = fileListRequest.getFileListRequest(token);
+        Call call = fileListRequest.getFileListRequest(token,null);
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
@@ -62,6 +62,8 @@ public class SplashFragment2 extends Fragment {
                     FileListBean fileListBean = (FileListBean) response.body();
                     if (fileListBean.getStatus() == 200) {
                         direction=1;
+                    }else{
+                        direction=2;
                     }
                 } else {
                     direction=2;

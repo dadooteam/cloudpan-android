@@ -1,22 +1,14 @@
 package com.project_test.forsix;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,35 +19,25 @@ public class UploadActivity extends AppCompatActivity {
     private ListView lv;
     private ArrayList<File> data = new ArrayList<>();
     private File[] files;
-    private FileAdapter fileAdapter;
-
+    private LocalFileAdapter fileAdapter;
+    private Button backToCloud;
     private String rootpath;
     private Stack<String> nowPathStack;
-    public static final int READ_EXTERNAL_STORAGE_CODE = 99;
+    private String currentPath;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        requestAccess();
+        setContentView(R.layout.activity_upload);
+        currentPath = getIntent().getStringExtra("currentPath");
+        Log.e("onCreate: ", currentPath);
+        initView();
 
-    }
-
-    private void requestAccess() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-            if (permission == PackageManager.PERMISSION_GRANTED) {
-                initView();
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_CODE);
-            }
-        } else {
-            initView();
-        }
     }
 
     private void initView() {
+        initBackButton();
         rootpath = Environment.getExternalStorageDirectory().toString();
         nowPathStack = new Stack<>();
         lv = (ListView) findViewById(R.id.lv);
@@ -69,10 +51,19 @@ public class UploadActivity extends AppCompatActivity {
             data.add(f);
         }
         showtv.setText(getPathString());
-        fileAdapter = new FileAdapter(this, data);
+        fileAdapter = new LocalFileAdapter(this, data);
         lv.setAdapter(fileAdapter);
-
         lv.setOnItemClickListener(new FileItemClickListener());
+    }
+
+    private void initBackButton() {
+        backToCloud = (Button) findViewById(R.id.goto_cloud_files);
+        backToCloud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();//TODO:暂定用finish，看后续上传有没有冲突，冲突要改
+            }
+        });
     }
 
     class FileItemClickListener implements AdapterView.OnItemClickListener {
@@ -86,14 +77,6 @@ public class UploadActivity extends AppCompatActivity {
 
             File file = files[position];
             if (file.isFile()) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                Uri data = Uri.fromFile(file);
-                int index = file.getName().lastIndexOf(".");
-                String suffix = file.getName().substring(index + 1);
-                String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(suffix);
-                intent.setDataAndType(data, type);
-                startActivity(intent);
             } else {
                 nowPathStack.push("/" + file.getName());
                 showChangge(getPathString());
@@ -120,22 +103,15 @@ public class UploadActivity extends AppCompatActivity {
         }
         return result;
     }
-    long lastBackPressed = 0;
+
     @Override
     public void onBackPressed() {
-            if (nowPathStack.peek() == rootpath) {
-                //当前时间
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - lastBackPressed < 2000) {
-                    super.onBackPressed();
-                } else {
-                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                }
-                lastBackPressed = currentTime;
-            } else {
-                nowPathStack.pop();
-                showChangge(getPathString());
-            }
+        if (nowPathStack.peek() == rootpath) {
+            super.onBackPressed();
+        } else {
+            nowPathStack.pop();
+            showChangge(getPathString());
         }
+    }
 }
 

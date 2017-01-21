@@ -27,11 +27,11 @@ import java.util.Date;
  * Created by kun on 2016/12/28.
  */
 
-public class FileAdapter extends BaseAdapter {
+public class LocalFileAdapter extends BaseAdapter {
     ArrayList<File> filedata;
     Context context;
 
-    public FileAdapter(Context context, ArrayList<File> data) {
+    public LocalFileAdapter(Context context, ArrayList<File> data) {
         this.context = context;
         this.filedata = data;
         fileItemListener = new FileListItemListender();
@@ -99,9 +99,11 @@ public class FileAdapter extends BaseAdapter {
         if (file.isDirectory()) {
             viewHolder.fileImage.setImageResource(R.drawable.folder);
             viewHolder.fileSize.setText("文件夹");
+            viewHolder.filemore.setVisibility(View.GONE);
         } else {
             viewHolder.fileImage.setImageResource(R.drawable.file);
             viewHolder.fileSize.setText(generateSize(file));
+            viewHolder.filemore.setVisibility(View.VISIBLE);
         }
         //将position与ibMore绑定
         viewHolder.filemore.setTag(position);
@@ -150,9 +152,7 @@ public class FileAdapter extends BaseAdapter {
      * 点击的时候图标旋转并弹出menu,根据点击的view获取其绑定的position,之后再在file集合中操作数据
      */
     public class FileListItemListender implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
-
         Integer position;
-
 
         @Override
         public void onClick(final View v) {
@@ -170,9 +170,9 @@ public class FileAdapter extends BaseAdapter {
             });
             popupMenu.setOnMenuItemClickListener(this);
             if (filedata.get(position).isDirectory()){
-                popupMenu.getMenu().findItem(R.id.more_remove).setVisible(false);
+                popupMenu.getMenu().findItem(R.id.more_upload).setVisible(false);
             }else {
-                popupMenu.getMenu().findItem(R.id.more_remove).setVisible(true);
+                popupMenu.getMenu().findItem(R.id.more_upload).setVisible(true);
 
             }
             RotateAnimation rotateAnimation = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -183,17 +183,11 @@ public class FileAdapter extends BaseAdapter {
 
         }
 
-        /**
-         * 菜单项点击
-         *
-         * @param item
-         * @return true 事件处理完毕  false
-         */
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.more_remove:
-                    doRemove();
+                case R.id.more_upload:
+                    doUpload();
                     break;
                 default:
                     break;
@@ -201,41 +195,25 @@ public class FileAdapter extends BaseAdapter {
             return true;
         }
 
-        /**
-         * 删除
-         */
-        private void doRemove() {
+        private void doUpload() {
             final File file = filedata.get(position);
-            judgeAlertDialog(context, "提醒", "你确认删除" + file.getName() + "吗(不可逆)?", new DialogInterface.OnClickListener() {
+            judgeAlertDialog(context, "提醒", "上传 " + file.getName() + " ?", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    deleteDir(file);
-                    filedata.remove(file);
+//                    deleteDir(file);
+                    uploadFile(file);
+//                    filedata.remove(file);
                     notifyDataSetChanged();
-                    showToast(file.getName() + " 删除成功");
+//                    showToast(file.getName() + " 删除成功");
                 }
             }, null);
         }
 
-        /**
-         * 显示消息
-         *
-         * @param message
-         */
         private void showToast(String message) {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * 判断对话框
-     * @param context
-     * @param title
-     * @param message
-     * @param okListener
-     * @param cancleListener
-     * @return
-     */
     public static AlertDialog judgeAlertDialog(Context context, String title,
                                                String message, DialogInterface.OnClickListener okListener,
                                                DialogInterface.OnClickListener cancleListener) {
@@ -245,10 +223,6 @@ public class FileAdapter extends BaseAdapter {
         return aDialog;
     }
 
-    /**
-     * 删除文件或文件夹
-     * @param file
-     */
     public static void deleteDir(File file) {
         if (file.isFile()) {
             file.delete();
@@ -259,6 +233,10 @@ public class FileAdapter extends BaseAdapter {
             }
         }
         file.delete();
+    }
+
+    public static void uploadFile(File file) {
+        //上传的逻辑
     }
 
 }
