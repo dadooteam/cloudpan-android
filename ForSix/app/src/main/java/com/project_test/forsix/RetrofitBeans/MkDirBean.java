@@ -1,23 +1,23 @@
 package com.project_test.forsix.RetrofitBeans;
 
-import java.util.List;
-
 /**
- * Created by kun on 2017/1/20.
+ * Created by kun on 2017/1/24.
  */
 
-public class FileListBean{
+public class MkDirBean {
 
 
     /**
      * code : 200001000
      * status : 200
-     * data : [{"gmtModify":1484025173590,"path":"D:\\cloudpan\\1\\aaa\\bbb\\ccc","name":"ccc","mime":"","size":0,"type":2},{"gmtModify":1484025443766,"path":"D:\\cloudpan\\1\\aaa\\bbb\\stock-redirect.png","name":"stock-redirect.png","size":9544,"type":1}]
+     * message : null
+     * data : {"gmtModify":1485244493325,"path":"aaa/ccc","name":"ccc","mime":"","size":0,"type":2}
      */
 
     private int code;
     private int status;
-    private List<DataBean> data;
+    private Object message;
+    private DataBean data;
 
     public int getCode() {
         return code;
@@ -35,18 +35,26 @@ public class FileListBean{
         this.status = status;
     }
 
-    public List<DataBean> getData() {
+    public Object getMessage() {
+        return message;
+    }
+
+    public void setMessage(Object message) {
+        this.message = message;
+    }
+
+    public DataBean getData() {
         return data;
     }
 
-    public void setData(List<DataBean> data) {
+    public void setData(DataBean data) {
         this.data = data;
     }
 
     public static class DataBean {
         /**
-         * gmtModify : 1484025173590
-         * path : D:\cloudpan\1\aaa\bbb\ccc
+         * gmtModify : 1485244493325
+         * path : aaa/ccc
          * name : ccc
          * mime :
          * size : 0

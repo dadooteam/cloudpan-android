@@ -6,6 +6,8 @@ package com.project_test.forsix;
 public class UserInfo {
     private String token;
 
+    private String currentPath;
+
     public String getToken() {
         return token;
     }
@@ -18,6 +20,14 @@ public class UserInfo {
 
     public static UserInfo getInstance() {
         return ourInstance;
+    }
+
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
+    public void setCurrentPath(String currentPath) {
+        this.currentPath = currentPath;
     }
 
     private UserInfo() {

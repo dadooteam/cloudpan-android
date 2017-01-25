@@ -17,19 +17,19 @@
         android:paddingLeft="10dp"/>
 
     <Button
+        android:id="@+id/goto_cloud_files"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/goto_cloud_files"
-        android:text="@string/button_goto_cloud"
         android:layout_alignParentBottom="true"
+        android:text="@string/button_goto_cloud"
         />
 
     <ListView
         android:id="@+id/lv"
-        android:layout_below="@id/showtv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/goto_cloud_files"
+        android:layout_below="@id/showtv"
         ></ListView>
 
 </RelativeLayout>

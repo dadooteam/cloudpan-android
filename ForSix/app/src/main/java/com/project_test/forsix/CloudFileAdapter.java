@@ -3,7 +3,9 @@ package com.project_test.forsix;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,27 +19,44 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.project_test.forsix.RetrofitBeans.DeleteBean;
 import com.project_test.forsix.RetrofitBeans.FileListBean;
+import com.project_test.forsix.Retrofits.RetrofitUtil;
 
+import java.io.File;
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by kun on 2017/1/20.
  */
 
 public class CloudFileAdapter extends BaseAdapter {
-    private Context mContext;
+    private static Context mContext;
     private List<FileListBean.DataBean> files;
-    private String currentPath;
+    private static Retrofit retrofit;
+    private static String token = UserInfo.getInstance().getToken();
+    private String targetPath = "/sdcard/CloudPan/";
 
     public CloudFileAdapter() {
     }
 
     public CloudFileAdapter(Context context, List<FileListBean.DataBean> beans) {
+        retrofit = new Retrofit.Builder()
+                .baseUrl(URLs.BASEURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         mContext = context;
         files = beans;
     }
@@ -181,7 +200,23 @@ public class CloudFileAdapter extends BaseAdapter {
 
         private void download() {
             String path = data.getPath();
-            Log.e("download: ", "假装下载了" + path);
+            String name = data.getName();
+            boolean downAvailable = true;
+            File[] localFiles = new File(targetPath).listFiles();
+            for (File file : localFiles
+                    ) {
+                if (file.getName().equals(name)) {
+                    downAvailable = false;
+                }
+            }
+            if (downAvailable) {
+                Intent intent = new Intent(mContext, DownloadService.class);
+                intent.putExtra("name", name);
+                intent.putExtra("path", path);
+                mContext.startService(intent);
+            } else {
+                Toast.makeText(mContext, "文件已存在，不可重复下载", Toast.LENGTH_SHORT).show();
+            }
         }
 
         private void delete() {
@@ -191,7 +226,6 @@ public class CloudFileAdapter extends BaseAdapter {
                     deleteFile(data);
                     files.remove(data);
                     notifyDataSetChanged();
-
                 }
             }, null);
 
@@ -208,8 +242,29 @@ public class CloudFileAdapter extends BaseAdapter {
         return aDialog;
     }
 
-    public static void deleteFile(FileListBean.DataBean bean){
-        Log.e("delete: ", "假装删除了" +bean.getName());
+    public static void deleteFile(FileListBean.DataBean bean) {
+        String path = bean.getPath();
+        RetrofitUtil fileDeleteRequest = retrofit.create(RetrofitUtil.class);
+        Call call = fileDeleteRequest.getDeleteRequest(token, path);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (response.isSuccessful()) {
+                    DeleteBean deleteBean = (DeleteBean) response.body();
+                    if (deleteBean.getStatus() == 200) {
+                        Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(mContext, "删除失败，请重试", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(mContext, "删除失败，请重试", Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Toast.makeText(mContext, "删除失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
