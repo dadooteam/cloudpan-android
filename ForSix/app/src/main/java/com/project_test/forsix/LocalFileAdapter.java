@@ -17,12 +17,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
 /**
  * Created by kun on 2016/12/28.
  */
@@ -37,20 +37,20 @@ public class LocalFileAdapter extends BaseAdapter {
         fileItemListener = new FileListItemListender();
     }
 
-    public File[]  setfiledata(ArrayList<File> data) {
+    public File[] setfiledata(ArrayList<File> data) {
         this.filedata = data;
 //        sort();
         this.notifyDataSetChanged();
         File[] files = new File[filedata.size()];
-        for (int i = 0;i<files.length;i++) {
+        for (int i = 0; i < files.length; i++) {
             files[i] = filedata.get(i);
         }
         return files;
     }
 
-    public File[]  setfiledata() {
+    public File[] setfiledata() {
         File[] files = new File[filedata.size()];
-        for (int i = 0;i<files.length;i++) {
+        for (int i = 0; i < files.length; i++) {
             files[i] = filedata.get(i);
         }
         return files;
@@ -105,7 +105,7 @@ public class LocalFileAdapter extends BaseAdapter {
             viewHolder.fileSize.setText(generateSize(file));
             viewHolder.filemore.setVisibility(View.VISIBLE);
         }
-        //将position与ibMore绑定
+
         viewHolder.filemore.setTag(position);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         viewHolder.fileName.setText(file.getName());
@@ -139,6 +139,7 @@ public class LocalFileAdapter extends BaseAdapter {
         TextView fileSize;
         TextView fileTime;
         ImageButton filemore;
+
         public ViewHolder(View v) {
             fileImage = (ImageView) v.findViewById(R.id.file_image);
             fileName = (TextView) v.findViewById(R.id.file_name);
@@ -147,6 +148,7 @@ public class LocalFileAdapter extends BaseAdapter {
             filemore = (ImageButton) v.findViewById(R.id.file_more);
         }
     }
+
     /**
      * ibMore被点击的监听器
      * 点击的时候图标旋转并弹出menu,根据点击的view获取其绑定的position,之后再在file集合中操作数据
@@ -169,9 +171,9 @@ public class LocalFileAdapter extends BaseAdapter {
                 }
             });
             popupMenu.setOnMenuItemClickListener(this);
-            if (filedata.get(position).isDirectory()){
+            if (filedata.get(position).isDirectory()) {
                 popupMenu.getMenu().findItem(R.id.more_upload).setVisible(false);
-            }else {
+            } else {
                 popupMenu.getMenu().findItem(R.id.more_upload).setVisible(true);
 
             }
@@ -196,47 +198,22 @@ public class LocalFileAdapter extends BaseAdapter {
         }
 
         private void doUpload() {
-            final File file = filedata.get(position);
-            judgeAlertDialog(context, "提醒", "上传 " + file.getName() + " ?", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                    deleteDir(file);
-                    uploadFile(file);
-//                    filedata.remove(file);
-                    notifyDataSetChanged();
-//                    showToast(file.getName() + " 删除成功");
+            File file = filedata.get(position);
+            String fileName = file.getAbsolutePath();
+            ArrayList<String> tmp = UserInfo.getInstance().getFilesToUpload();
+            if (tmp.size() <= 4) {
+                if (!tmp.contains(fileName)) {
+                    tmp.add(fileName);
+                } else {
+                    Toast.makeText(context, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
                 }
-            }, null);
-        }
+                if (UploadActivity.instance.filesToUploadAdapter != null) {
+                    UploadActivity.instance.filesToUploadAdapter.notifyDataSetChanged();
+                }
+            } else {
+                Toast.makeText(context, "上传队列文件数量过多，请立即开始上传", Toast.LENGTH_SHORT).show();
 
-        private void showToast(String message) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static AlertDialog judgeAlertDialog(Context context, String title,
-                                               String message, DialogInterface.OnClickListener okListener,
-                                               DialogInterface.OnClickListener cancleListener) {
-        AlertDialog aDialog = new AlertDialog.Builder(context).setTitle(title).setMessage(message)
-                .setNegativeButton("确定", okListener)
-                .setPositiveButton("取消", cancleListener).show();
-        return aDialog;
-    }
-
-    public static void deleteDir(File file) {
-        if (file.isFile()) {
-            file.delete();
-        } else {
-            File[] files = file.listFiles();
-            for (File f : files) {
-                deleteDir(f);
             }
         }
-        file.delete();
     }
-
-    public static void uploadFile(File file) {
-        //上传的逻辑
-    }
-
 }

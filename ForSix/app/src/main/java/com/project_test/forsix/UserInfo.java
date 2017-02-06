@@ -1,10 +1,16 @@
 package com.project_test.forsix;
 
+import android.util.Log;
+
+import java.util.ArrayList;
+
 /**
  * Created by kun on 2017/1/18.
  */
 public class UserInfo {
     private String token;
+
+    private ArrayList<String> filesToUpload;
 
     private String currentPath;
 
@@ -31,5 +37,14 @@ public class UserInfo {
     }
 
     private UserInfo() {
+        filesToUpload=new ArrayList<>();
+    }
+
+    public ArrayList<String> getFilesToUpload() {
+        return filesToUpload;
+    }
+
+    public void setFilesToUpload(ArrayList<String> filesToUpload) {
+        this.filesToUpload = filesToUpload;
     }
 }

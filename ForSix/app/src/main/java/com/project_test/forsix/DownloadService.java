@@ -5,9 +5,11 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 
@@ -26,8 +28,9 @@ import java.util.ArrayList;
 public class DownloadService extends Service {
     private String token;
     private NotificationManager manager;
-    private int label;
+    private int downloadlabel;
     private ArrayList<String> downloadPaths;
+    private SharedPreferences sp;
 
     public DownloadService() {
 
@@ -39,31 +42,31 @@ public class DownloadService extends Service {
         super.onCreate();
         token = UserInfo.getInstance().getToken();
         manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        label = 1;
+        sp = getApplication().getSharedPreferences("usrInfo", MODE_PRIVATE);
+        downloadlabel = sp.getInt("downloadlabel", 0);
         downloadPaths = new ArrayList<>();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        label++;
+        downloadlabel++;
 
         String path = intent.getStringExtra("path");
         String name = intent.getStringExtra("name");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext());
-        //TODO:Notification得换成自定义的，带cancel按钮的
-        RequestParams entity = new RequestParams(URLs.BASEURL + "download");
-        entity.addHeader("Authorization", token);
-        entity.addBodyParameter("path", path);
-        entity.setAutoResume(true);
+        RequestParams downloadEntity = new RequestParams(URLs.BASEURL + "download");
+        downloadEntity.addHeader("Authorization", token);
+        downloadEntity.addBodyParameter("path", path);
+        downloadEntity.setAutoResume(true);
         String filePath = "/sdcard/CloudPan/" + name;
-        entity.setSaveFilePath(filePath);
+        downloadEntity.setSaveFilePath(filePath);
 
         if (downloadPaths.contains(path)) {
             Toast.makeText(this, "所选文件正在下载中，请稍后", Toast.LENGTH_SHORT).show();
         } else {
             startDownloadAndShowNotification(new DownloadParam(
-                    path, name, entity, label, builder
+                    path, name, downloadEntity, downloadlabel, builder
             ));
         }
 
@@ -148,6 +151,10 @@ public class DownloadService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("onDestroy: ", "destory");
+        SharedPreferences.Editor editor=sp.edit();
+        editor.putInt("downloadlabel",downloadlabel);
+        editor.commit();
     }
 }
 

@@ -61,9 +61,8 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences sp=getSharedPreferences("usrInfo",MODE_PRIVATE);
                             SharedPreferences.Editor editor=sp.edit();
                             editor.putString("token",token);
+                            editor.putInt("downloadlabel",0);
                             editor.commit();
-//                            Log.e("onResponse1: ",loginInfo.getData().getToken());
-//                            Log.e("onResponse2: ",loginInfo.getData().getPhone());
                             Intent intent=new Intent(LoginActivity.this,ShowCloudFilesActivity.class);
                             startActivity(intent);
                             Thread thread=new Thread(new Runnable() {

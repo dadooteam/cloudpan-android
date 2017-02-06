@@ -26,7 +26,6 @@ import com.project_test.forsix.RetrofitBeans.FileListBean;
 import com.project_test.forsix.Retrofits.RetrofitUtil;
 
 import java.io.File;
-import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;

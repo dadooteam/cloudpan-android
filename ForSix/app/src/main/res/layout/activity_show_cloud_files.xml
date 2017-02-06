@@ -7,45 +7,46 @@
     android:layout_height="match_parent"
     tools:context="com.project_test.forsix.ShowCloudFilesActivity">
 
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/create"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/buttons"
-            >
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_create"
-                android:id="@+id/create"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_goto_upload"
-                android:id="@+id/goto_upload"
-                />
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/button_goto_login"
-                android:id="@+id/goto_login"
-                />
-        </LinearLayout>
+            android:layout_weight="1"
+            android:text="@string/button_create"
+            />
 
+        <Button
+            android:id="@+id/goto_upload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_goto_upload"
+            />
+
+        <Button
+            android:id="@+id/goto_login"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_goto_login"
+            />
+    </LinearLayout>
 
 
     <ListView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/cloud_files"
-    android:layout_above="@id/buttons"
-    >
-</ListView>
+        android:id="@+id/cloud_files"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/buttons"
+        >
+    </ListView>
 
 </RelativeLayout>
