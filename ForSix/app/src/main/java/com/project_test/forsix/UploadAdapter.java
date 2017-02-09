@@ -6,24 +6,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.project_test.forsix.RetrofitBeans.FileListBean;
+import com.project_test.forsix.UploadRelated.UploadBean;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static android.R.attr.name;
 
 
 /**
  * Created by kun on 2017/1/26.
  */
-public class FilesToUploadAdapter extends BaseAdapter {
-    private ArrayList<String> mFiles;
+public class UploadAdapter extends BaseAdapter {
     private static Context mContext;
+    private ArrayList<UploadBean> mFiles;
 
-
-    public FilesToUploadAdapter() {
+    public UploadAdapter() {
     }
 
-    public FilesToUploadAdapter(Context context, ArrayList<String> files) {
+    public UploadAdapter(Context context, ArrayList<UploadBean> files) {
         mContext = context;
         mFiles = files;
     }
@@ -60,19 +66,40 @@ public class FilesToUploadAdapter extends BaseAdapter {
     private class Holer {
         private TextView fileName;
         private Button remove;
+        private ProgressBar bar;
+        private TextView percentage;
 
 
         public Holer(View v) {
             fileName = (TextView) v.findViewById(R.id.file_name);
             remove = (Button) v.findViewById(R.id.remove_from_list);
+            bar= (ProgressBar) v.findViewById(R.id.progressbar);
+            percentage= (TextView) v.findViewById(R.id.percentage);
+
         }
 
-        public void bindView(int position, final String name) {
-            fileName.setText(name);
+        public void bindView(int position, final UploadBean bean) {
+            fileName.setText(bean.getFileName());
+            bar.setProgress(bean.getProgress());
+            bar.setMax(100);
+            percentage.setText(bean.getProgress()+"%");
+            if (bean.getStatus()==0){
+                bar.setVisibility(View.INVISIBLE);
+                percentage.setVisibility(View.INVISIBLE);
+                remove.setVisibility(View.VISIBLE);
+            }else {
+                bar.setVisibility(View.VISIBLE);
+                percentage.setVisibility(View.VISIBLE);
+                remove.setVisibility(View.INVISIBLE);
+            }
             remove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mFiles.remove(name);
+                    for (int i = 0; i < mFiles.size(); i++) {
+                        if(mFiles.get(i).getFileName().equals(bean.getFileName())){
+                            mFiles.remove(i);
+                        }
+                    }
                     notifyDataSetChanged();
                 }
             });

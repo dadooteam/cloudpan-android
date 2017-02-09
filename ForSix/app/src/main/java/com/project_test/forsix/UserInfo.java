@@ -1,8 +1,10 @@
 package com.project_test.forsix;
 
-import android.util.Log;
+
+import com.project_test.forsix.UploadRelated.UploadBean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by kun on 2017/1/18.
@@ -10,7 +12,9 @@ import java.util.ArrayList;
 public class UserInfo {
     private String token;
 
-    private ArrayList<String> filesToUpload;
+//    private ArrayList<String> filepathsToUpload;//文件路径
+
+    private ArrayList<UploadBean> filesToUpload;//文件
 
     private String currentPath;
 
@@ -37,14 +41,14 @@ public class UserInfo {
     }
 
     private UserInfo() {
+//        filepathsToUpload=new ArrayList<>();
         filesToUpload=new ArrayList<>();
     }
 
-    public ArrayList<String> getFilesToUpload() {
-        return filesToUpload;
-    }
+//    public ArrayList<String> getFilepathsToUpload() {
+//        return filepathsToUpload;
+//    }
 
-    public void setFilesToUpload(ArrayList<String> filesToUpload) {
-        this.filesToUpload = filesToUpload;
-    }
+    public ArrayList<UploadBean> getFilesToUpload(){return filesToUpload;}
+
 }

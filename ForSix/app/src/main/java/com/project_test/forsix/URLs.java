@@ -5,7 +5,7 @@ package com.project_test.forsix;
  */
 
 public class URLs {
-    public static final String BASEURL="http://pan.dadoo.im:7676/";
+    public static final String BASEURL="http://api.dadoo.im:7777/pan/";
 
 
 }

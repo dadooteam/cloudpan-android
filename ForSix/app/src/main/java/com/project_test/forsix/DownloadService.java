@@ -79,7 +79,7 @@ public class DownloadService extends Service {
             @Override
             public void onStarted() {
                 downloadPaths.add(paramtmp.getPath());
-                paramtmp.getBuilder().setSmallIcon(R.mipmap.ic_launcher);
+                paramtmp.getBuilder().setSmallIcon(R.drawable.icon);
                 paramtmp.getBuilder().setContentTitle(paramtmp.getName() + " 正在下载");
                 paramtmp.getBuilder().setContentText("准备下载");
                 paramtmp.getBuilder().setProgress(100, 0, true);

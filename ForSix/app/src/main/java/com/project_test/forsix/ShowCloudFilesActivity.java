@@ -5,14 +5,17 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.app.AlertDialog;
 
@@ -44,11 +47,13 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
     private EditText newfolder_name;
     private int currentDirLevel = 0;//back有没有效果,为0时在根目录，无上一级
     private ArrayList<String> paths;
+    private RelativeLayout frame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_cloud_files);
+        frame= (RelativeLayout) findViewById(R.id.activity_show_cloud_files);
         sp = getSharedPreferences("usrInfo", MODE_PRIVATE);
         init();
     }
@@ -89,8 +94,10 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
                 Intent intent = new Intent(ShowCloudFilesActivity.this, UploadActivity.class);
                 if (currentPath == null) {
                     intent.putExtra("currentPath", "");
+                    UserInfo.getInstance().setCurrentPath("");
                 } else {
                     intent.putExtra("currentPath", currentPath);
+                    UserInfo.getInstance().setCurrentPath(currentPath);
                 }
                 startActivity(intent);
             }
@@ -268,6 +275,16 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
                                 files.clear();
                                 files.addAll(fileListBean.getData());
                                 adapter.notifyDataSetChanged();
+                                if (files.size()==0){
+                                    Snackbar.make( frame, "此文件夹内无文件", Snackbar.LENGTH_SHORT)
+                                            .setAction("知道了", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                }
+                                            })
+                                            .show();
+
+                                }
                             } else {
                                 Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
                             }
@@ -329,6 +346,37 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
     }
 
     long lastBackPressed = 0;
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
+        Call call = fileListRequest.getFileListRequest(token, currentPath);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (response.isSuccessful()) {
+                    FileListBean fileListBean = (FileListBean) response.body();
+                    if (fileListBean.getStatus() == 200) {
+                        files.clear();
+                        files.addAll(fileListBean.getData());
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 
     @Override
     public void onBackPressed() {

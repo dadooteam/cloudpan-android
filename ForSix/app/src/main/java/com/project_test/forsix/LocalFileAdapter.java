@@ -17,11 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.project_test.forsix.UploadRelated.UploadBean;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by kun on 2016/12/28.
@@ -149,10 +152,6 @@ public class LocalFileAdapter extends BaseAdapter {
         }
     }
 
-    /**
-     * ibMore被点击的监听器
-     * 点击的时候图标旋转并弹出menu,根据点击的view获取其绑定的position,之后再在file集合中操作数据
-     */
     public class FileListItemListender implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
         Integer position;
 
@@ -200,15 +199,21 @@ public class LocalFileAdapter extends BaseAdapter {
         private void doUpload() {
             File file = filedata.get(position);
             String fileName = file.getAbsolutePath();
-            ArrayList<String> tmp = UserInfo.getInstance().getFilesToUpload();
+            ArrayList<UploadBean> tmp = UserInfo.getInstance().getFilesToUpload();
             if (tmp.size() <= 4) {
-                if (!tmp.contains(fileName)) {
-                    tmp.add(fileName);
+                boolean addAvailable=true;//true是可以添加
+                for (UploadBean bean:tmp){
+                    if (bean.getFileName().equals(fileName)){
+                        addAvailable=false;
+                    }
+                }
+                if (addAvailable) {
+                    tmp.add(new UploadBean(0,0,fileName));
                 } else {
                     Toast.makeText(context, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
                 }
-                if (UploadActivity.instance.filesToUploadAdapter != null) {
-                    UploadActivity.instance.filesToUploadAdapter.notifyDataSetChanged();
+                if (UploadActivity.instance.uploadAdapter != null) {
+                    UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
                 }
             } else {
                 Toast.makeText(context, "上传队列文件数量过多，请立即开始上传", Toast.LENGTH_SHORT).show();
