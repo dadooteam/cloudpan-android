@@ -42,6 +42,11 @@
             android:enabled="true"
             android:exported="true">
         </service>
+
+        <activity android:name=".ChargeActivity">
+        </activity>
+        <activity android:name=".Upload2Activity">
+        </activity>
     </application>
 
 </manifest>

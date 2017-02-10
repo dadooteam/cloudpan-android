@@ -39,7 +39,6 @@ public class SplashFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View ret = inflater.inflate(R.layout.fragment_splash_fragment2, container, false);
         enter = (Button) ret.findViewById(R.id.enter);
         SharedPreferences sp = getActivity().getSharedPreferences("usrInfo", MODE_PRIVATE);
@@ -48,55 +47,57 @@ public class SplashFragment2 extends Fragment {
         intent1 = new Intent(getActivity(), ShowCloudFilesActivity.class);
         intent2 = new Intent(getActivity(), LoginActivity.class);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(URLs.BASEURL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(URLs.BASEURL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
-        Call call = fileListRequest.getFileListRequest(token,null);
-        call.enqueue(new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) {
-                if (response.isSuccessful()) {
-                    FileListBean fileListBean = (FileListBean) response.body();
-                    if (fileListBean.getStatus() == 200) {
-                        direction=1;
-                    }else{
-                        direction=2;
+            RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
+            Call call = fileListRequest.getFileListRequest(token, null);
+            call.enqueue(new Callback() {
+                @Override
+                public void onResponse(Call call, Response response) {
+                    if (response.isSuccessful()) {
+                        FileListBean fileListBean = (FileListBean) response.body();
+                        if (fileListBean.getStatus() == 200) {
+                            direction = 1;
+                        } else {
+                            direction = 2;
+                        }
+                    } else {
+                        direction = 2;
                     }
-                } else {
-                    direction=2;
                 }
-            }
 
-            @Override
-            public void onFailure(Call call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call call, Throwable t) {
+                }
+            });
 
 
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            final Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    getActivity().finish();
                 }
-                getActivity().finish();
-            }
-        });
-        enter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (direction==1){
-                startActivity(intent1);}else {
-                    startActivity(intent2);
+            });
+            enter.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (direction == 1) {
+                        startActivity(intent1);
+                    } else {
+                        startActivity(intent2);
+                    }
+                    thread.start();
                 }
-                thread.start();
-            }
-        });
+            });
+
         return ret;
     }
 }

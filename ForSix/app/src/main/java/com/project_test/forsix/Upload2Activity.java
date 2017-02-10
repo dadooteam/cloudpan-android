@@ -4,15 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,8 +30,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class UploadActivity extends AppCompatActivity {
-    public static UploadActivity instance = null;
+public class Upload2Activity extends AppCompatActivity {
+    public static Upload2Activity instance = null;
     private TextView showtv;
     private ListView lv;//本地文件列表
     private ListView showFilesToUpload;
@@ -52,7 +51,7 @@ public class UploadActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload);
+        setContentView(R.layout.activity_upload2);
         instance = this;
         retrofit = new Retrofit.Builder()
                 .baseUrl(URLs.BASEURL)
@@ -81,7 +80,7 @@ public class UploadActivity extends AppCompatActivity {
         showtv.setText(getPathString());
         fileAdapter = new LocalFileAdapter(this, data);
         lv.setAdapter(fileAdapter);
-        lv.setOnItemClickListener(new FileItemClickListener());
+        lv.setOnItemClickListener(new Upload2Activity.FileItemClickListener());
         uploadAdapter = new UploadAdapter(this, UserInfo.getInstance().getFilesToUpload());
         showFilesToUpload.setAdapter(uploadAdapter);
 
@@ -108,7 +107,7 @@ public class UploadActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(UploadActivity.this,UploadService.class);
+                Intent intent=new Intent(Upload2Activity.this,UploadService.class);
                 intent.putExtra("currentPath",currentPath);
                 checkRepeatFiles(intent);
 
@@ -146,22 +145,22 @@ public class UploadActivity extends AppCompatActivity {
                                 }
 
                                 if (buffer.toString().length()>0){
-                                    Toast.makeText(UploadActivity.this, buffer.toString()+"已存在，不能再次上传", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Upload2Activity.this, buffer.toString()+"已存在，不能再次上传", Toast.LENGTH_LONG).show();
 
                                 }
                                 uploadAdapter.notifyDataSetChanged();
                                 startService(intent1);
                             } else {
-                                Toast.makeText(UploadActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(UploadActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call call, Throwable t) {
-                        Toast.makeText(UploadActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -196,7 +195,7 @@ public class UploadActivity extends AppCompatActivity {
                     Toast.makeText(this, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
                 }
                 if (uploadAdapter != null) {
-                 uploadAdapter.notifyDataSetChanged();
+                    uploadAdapter.notifyDataSetChanged();
                 }
             } else {
                 Toast.makeText(this, "上传队列文件数量过多，请立即开始上传", Toast.LENGTH_SHORT).show();
@@ -250,6 +249,4 @@ public class UploadActivity extends AppCompatActivity {
             showChangge(getPathString());
         }
     }
-
 }
-

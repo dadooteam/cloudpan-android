@@ -12,7 +12,5 @@
     <string name="upload">上传</string>
     <string name="upload_list">上传列表</string>
     <string name="remove_from_upload_list">移除</string>
-    <string name="swap_to_show_download">滑动显示下载进度</string>
-
 
 </resources>

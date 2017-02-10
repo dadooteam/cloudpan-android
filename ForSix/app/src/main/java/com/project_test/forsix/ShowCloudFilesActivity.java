@@ -91,7 +91,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
         upload.setOnClickListener(new View.OnClickListener() {//上传按钮
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowCloudFilesActivity.this, UploadActivity.class);
+                Intent intent = new Intent(ShowCloudFilesActivity.this, Upload2Activity.class);
                 if (currentPath == null) {
                     intent.putExtra("currentPath", "");
                     UserInfo.getInstance().setCurrentPath("");
@@ -322,6 +322,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
                     FileListBean fileListBean = (FileListBean) response.body();
                     if (fileListBean.getStatus() == 200) {
                         files.addAll(fileListBean.getData());
+                        Log.e("init",files.size()+"个item" );
                         adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();

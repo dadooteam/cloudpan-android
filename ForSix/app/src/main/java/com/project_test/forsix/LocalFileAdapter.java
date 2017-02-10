@@ -212,8 +212,8 @@ public class LocalFileAdapter extends BaseAdapter {
                 } else {
                     Toast.makeText(context, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
                 }
-                if (UploadActivity.instance.uploadAdapter != null) {
-                    UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                if (Upload2Activity.instance.uploadAdapter != null) {
+                    Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                 }
             } else {
                 Toast.makeText(context, "上传队列文件数量过多，请立即开始上传", Toast.LENGTH_SHORT).show();

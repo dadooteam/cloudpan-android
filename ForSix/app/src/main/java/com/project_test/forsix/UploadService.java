@@ -63,8 +63,8 @@ public class UploadService extends Service {
                         }
                     }
 
-                    if (UploadActivity.instance.uploadAdapter != null) {
-                        UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                    if (Upload2Activity.instance.uploadAdapter != null) {
+                        Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                     }
                     Toast.makeText(UploadService.this, file.getName() + "上传完成", Toast.LENGTH_SHORT).show();
                 }
@@ -79,8 +79,8 @@ public class UploadService extends Service {
                             tmp.remove(i);
                         }
                     }
-                    if (UploadActivity.instance.uploadAdapter != null) {
-                        UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                    if (Upload2Activity.instance.uploadAdapter != null) {
+                        Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                     }
                     Toast.makeText(UploadService.this, file.getName() + "上传失败，请重试", Toast.LENGTH_SHORT).show();
                 }
@@ -99,8 +99,8 @@ public class UploadService extends Service {
                             tmp.remove(i);
                         }
                     }
-                    if (UploadActivity.instance.uploadAdapter != null) {
-                        UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                    if (Upload2Activity.instance.uploadAdapter != null) {
+                        Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                     }
                 }
 
@@ -117,8 +117,8 @@ public class UploadService extends Service {
                             tmp.get(i).setStatus(1);
                         }
                     }
-                    if (UploadActivity.instance.uploadAdapter != null) {
-                        UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                    if (Upload2Activity.instance.uploadAdapter != null) {
+                        Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                     }
 
 
@@ -134,8 +134,8 @@ public class UploadService extends Service {
                             tmp.get(i).setProgress(progress);
                         }
                     }
-                    if (UploadActivity.instance.uploadAdapter != null) {
-                        UploadActivity.instance.uploadAdapter.notifyDataSetChanged();
+                    if (Upload2Activity.instance.uploadAdapter != null) {
+                        Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
                     }
                 }
             });
