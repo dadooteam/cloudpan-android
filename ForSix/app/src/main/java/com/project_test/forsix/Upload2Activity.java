@@ -2,6 +2,7 @@ package com.project_test.forsix;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -49,20 +50,27 @@ public class Upload2Activity extends AppCompatActivity {
     private String currentPath;
     private Retrofit retrofit;
     private RelativeLayout frame;
+    private int snackBarLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload2);
         instance = this;
+        SharedPreferences sp=getSharedPreferences("usrInfo",MODE_PRIVATE);
+        snackBarLabel=sp.getInt("snackBarLabel",0);
+        SharedPreferences.Editor editor=sp.edit();
+        editor.putInt("snackBarLabel",1);
+        editor.commit();
         frame= (RelativeLayout) findViewById(R.id.centeral_local_file);
+        if (snackBarLabel==0){
         Snackbar.make(frame, "右滑显示上传列表", Snackbar.LENGTH_SHORT)
                 .setAction("知道了", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                     }
                 })
-                .show();
+                .show();}
         retrofit = new Retrofit.Builder()
                 .baseUrl(URLs.BASEURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -257,6 +265,9 @@ public class Upload2Activity extends AppCompatActivity {
         if (nowPathStack.peek() != rootpath) {
             nowPathStack.pop();
             showChangge(getPathString());
+        }else {
+            super.onBackPressed();
+
         }
     }
 }

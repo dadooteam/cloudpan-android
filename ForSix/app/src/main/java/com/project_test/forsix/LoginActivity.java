@@ -62,6 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor=sp.edit();
                             editor.putString("token",token);
                             editor.putInt("downloadlabel",0);
+                            editor.putInt("snackBarLabel",0);
                             editor.commit();
                             Intent intent=new Intent(LoginActivity.this,ShowCloudFilesActivity.class);
                             startActivity(intent);
