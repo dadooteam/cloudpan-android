@@ -65,14 +65,12 @@ public class UploadAdapter extends BaseAdapter {
 
     private class Holer {
         private TextView fileName;
-        private Button remove;
         private ProgressBar bar;
         private TextView percentage;
 
 
         public Holer(View v) {
             fileName = (TextView) v.findViewById(R.id.file_name);
-            remove = (Button) v.findViewById(R.id.remove_from_list);
             bar= (ProgressBar) v.findViewById(R.id.progressbar);
             percentage= (TextView) v.findViewById(R.id.percentage);
 
@@ -86,23 +84,10 @@ public class UploadAdapter extends BaseAdapter {
             if (bean.getStatus()==0){
                 bar.setVisibility(View.INVISIBLE);
                 percentage.setVisibility(View.INVISIBLE);
-                remove.setVisibility(View.VISIBLE);
             }else {
                 bar.setVisibility(View.VISIBLE);
                 percentage.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.INVISIBLE);
             }
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (int i = 0; i < mFiles.size(); i++) {
-                        if(mFiles.get(i).getFileName().equals(bean.getFileName())){
-                            mFiles.remove(i);
-                        }
-                    }
-                    notifyDataSetChanged();
-                }
-            });
         }
     }
 

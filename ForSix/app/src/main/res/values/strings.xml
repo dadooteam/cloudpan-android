@@ -9,8 +9,6 @@
     <string name="button_goto_cloud">返回网盘</string>
     <string name="button_goto_login">更换账号</string>
     <string name="pick_photo">传照片</string>
-    <string name="upload">上传</string>
-    <string name="upload_list">上传列表</string>
     <string name="remove_from_upload_list">移除</string>
 
 </resources>

@@ -43,8 +43,8 @@ public class Upload2Activity extends AppCompatActivity {
     private LocalFileAdapter fileAdapter;
     private Button backToCloud;
     private Button pickPhoto;
-    private Button upload;
-    public  UploadAdapter uploadAdapter;
+    //    private Button upload;
+    public UploadAdapter uploadAdapter;
     private String rootpath;
     private Stack<String> nowPathStack;
     private String currentPath;
@@ -52,25 +52,30 @@ public class Upload2Activity extends AppCompatActivity {
     private RelativeLayout frame;
     private int snackBarLabel;
 
+    public String getCurrentPath() {
+        return currentPath;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload2);
         instance = this;
-        SharedPreferences sp=getSharedPreferences("usrInfo",MODE_PRIVATE);
-        snackBarLabel=sp.getInt("snackBarLabel",0);
-        SharedPreferences.Editor editor=sp.edit();
-        editor.putInt("snackBarLabel",1);
+        SharedPreferences sp = getSharedPreferences("usrInfo", MODE_PRIVATE);
+        snackBarLabel = sp.getInt("snackBarLabel", 0);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("snackBarLabel", 1);
         editor.commit();
-        frame= (RelativeLayout) findViewById(R.id.centeral_local_file);
-        if (snackBarLabel==0){
-        Snackbar.make(frame, "右滑显示上传列表", Snackbar.LENGTH_SHORT)
-                .setAction("知道了", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    }
-                })
-                .show();}
+        frame = (RelativeLayout) findViewById(R.id.centeral_local_file);
+        if (snackBarLabel == 0) {
+            Snackbar.make(frame, "右滑显示上传列表", Snackbar.LENGTH_SHORT)
+                    .setAction("知道了", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    })
+                    .show();
+        }
         retrofit = new Retrofit.Builder()
                 .baseUrl(URLs.BASEURL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -121,71 +126,6 @@ public class Upload2Activity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             }
         });
-        upload= (Button) findViewById(R.id.upload);
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(Upload2Activity.this,UploadService.class);
-                intent.putExtra("currentPath",currentPath);
-                checkRepeatFiles(intent);
-
-            }
-
-            private void checkRepeatFiles(final Intent intent1) {
-                RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
-                Call call = fileListRequest.getFileListRequest(UserInfo.getInstance().getToken(), currentPath);
-                call.enqueue(new Callback() {
-                    @Override
-                    public void onResponse(Call call, Response response) {
-                        if (response.isSuccessful()) {
-                            FileListBean fileListBean = (FileListBean) response.body();
-                            if (fileListBean.getStatus() == 200) {
-                                List<FileListBean.DataBean> data = fileListBean.getData();
-                                List<String> filesOnline=new ArrayList<String>();
-                                for (FileListBean.DataBean beantmp:data){
-                                    filesOnline.add(beantmp.getName());
-                                }
-                                ArrayList<UploadBean> filesSelected = UserInfo.getInstance().getFilesToUpload();
-                                ArrayList<UploadBean> filesRepeat=new ArrayList<UploadBean>();
-                                ArrayList<String> fileNamesRepeat=new ArrayList<String>();
-                                for (int i = 0; i < filesSelected.size(); i++) {
-                                    File filetmp=new File(filesSelected.get(i).getFileName());
-                                    String nametmp=filetmp.getName();
-                                    if (filesOnline.contains(nametmp)){
-                                        filesRepeat.add(filesSelected.get(i));
-                                        fileNamesRepeat.add(nametmp);
-                                    }
-                                }
-                                filesSelected.removeAll(filesRepeat);
-                                StringBuffer buffer=new StringBuffer();
-                                for(String string:fileNamesRepeat){
-                                    buffer.append(string+" ");
-                                }
-
-                                if (buffer.toString().length()>0){
-                                    Toast.makeText(Upload2Activity.this, buffer.toString()+"已存在，不能再次上传", Toast.LENGTH_LONG).show();
-
-                                }
-                                uploadAdapter.notifyDataSetChanged();
-                                startService(intent1);
-                            } else {
-                                Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call call, Throwable t) {
-                        Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-
-            }
-        });
 
     }
 
@@ -200,26 +140,62 @@ public class Upload2Activity extends AppCompatActivity {
             int columnIndex = c.getColumnIndex(filePathColumns[0]);
             String fileName = c.getString(columnIndex);
             ArrayList<UploadBean> tmp = UserInfo.getInstance().getFilesToUpload();
-            if (tmp.size() <= 4) {
-                boolean addAvailable=true;//true是可以添加
-                for (UploadBean bean:tmp){
-                    if (bean.getFileName().equals(fileName)){
-                        addAvailable=false;
-                    }
+            boolean addAvailable = true;//true是可以添加
+            for (UploadBean bean : tmp) {
+                if (bean.getFileName().equals(fileName)) {
+                    addAvailable = false;
                 }
-                if (addAvailable) {
-                    tmp.add(new UploadBean(0,0,fileName));
-                } else {
-                    Toast.makeText(this, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
-                }
-                if (uploadAdapter != null) {
-                    uploadAdapter.notifyDataSetChanged();
-                }
+            }
+            if (addAvailable) {
+                Intent intent = new Intent(Upload2Activity.this, UploadService.class);
+                checkRepeatFiles(tmp, fileName, intent);
             } else {
-                Toast.makeText(this, "上传队列文件数量过多，请立即开始上传", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "文件已存在于上传列表中", Toast.LENGTH_SHORT).show();
+            }
+            if (uploadAdapter != null) {
+                uploadAdapter.notifyDataSetChanged();
             }
             c.close();
         }
+    }
+
+    private void checkRepeatFiles(final ArrayList<UploadBean> tmp, final String fileName, final Intent intent) {
+        RetrofitUtil fileListRequest = retrofit.create(RetrofitUtil.class);
+        Call call = fileListRequest.getFileListRequest(UserInfo.getInstance().getToken(), currentPath);
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                if (response.isSuccessful()) {
+                    FileListBean fileListBean = (FileListBean) response.body();
+                    if (fileListBean.getStatus() == 200) {
+                        List<FileListBean.DataBean> data = fileListBean.getData();
+                        List<String> filesOnline = new ArrayList<String>();
+                        File file = new File(fileName);
+                        String fileNameTmp = file.getName();
+                        for (FileListBean.DataBean beantmp : data) {
+                            filesOnline.add(beantmp.getName());
+                        }
+                        if (filesOnline.contains(fileNameTmp)) {
+                            Toast.makeText(Upload2Activity.this, fileNameTmp + "已存在，不能再次上传", Toast.LENGTH_LONG).show();
+                        } else {
+                            tmp.add(new UploadBean(0, 0, fileName));
+                            Upload2Activity.instance.uploadAdapter.notifyDataSetChanged();
+                            startService(intent);
+                        }
+
+                    } else {
+                        Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Toast.makeText(Upload2Activity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     class FileItemClickListener implements AdapterView.OnItemClickListener {
@@ -265,9 +241,8 @@ public class Upload2Activity extends AppCompatActivity {
         if (nowPathStack.peek() != rootpath) {
             nowPathStack.pop();
             showChangge(getPathString());
-        }else {
+        } else {
             super.onBackPressed();
-
         }
     }
 }
