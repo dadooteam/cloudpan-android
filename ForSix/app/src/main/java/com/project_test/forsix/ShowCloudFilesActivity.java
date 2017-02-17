@@ -45,7 +45,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private AlertDialog mydialog;
     private EditText newfolder_name;
-    private int currentDirLevel = 0;//back有没有效果,为0时在根目录，无上一级
+    private int currentDirLevel = 0;
     private ArrayList<String> paths;
     private RelativeLayout frame;
 
@@ -88,7 +88,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
         create = (Button) findViewById(R.id.create);
         upload = (Button) findViewById(R.id.goto_upload);
 
-        upload.setOnClickListener(new View.OnClickListener() {//上传按钮
+        upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowCloudFilesActivity.this, Upload2Activity.class);
@@ -103,7 +103,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
             }
         });
 
-        changeUser.setOnClickListener(new View.OnClickListener() {//更换账户按钮
+        changeUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = sp.edit();
@@ -283,7 +283,6 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
                                                 }
                                             })
                                             .show();
-
                                 }
                             } else {
                                 Toast.makeText(ShowCloudFilesActivity.this, "网络错误，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -321,6 +320,7 @@ public class ShowCloudFilesActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     FileListBean fileListBean = (FileListBean) response.body();
                     if (fileListBean.getStatus() == 200) {
+                        files.clear();
                         files.addAll(fileListBean.getData());
                         Log.e("init",files.size()+"个item" );
                         adapter.notifyDataSetChanged();
